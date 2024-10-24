@@ -15,11 +15,16 @@ The script retains URLs with the following file extensions if they are found:
 - `.pl`
 - `.py`
 
-## How Does It Work?
+## What does this script do?
 The script performs a recursive search through the sitemap. If nested sitemaps are found within the primary sitemap, it will also extract URLs from each nested sitemap. The final output is a text file containing all the collected URLs.
 
 This tool was designed to help assess a website's structure and gather a comprehensive list of accessible pages for further analysis.
 
+## Requirements
+This script uses requests python library.
+```
+pip install requests
+```
 
 ## Usage
 <br>
