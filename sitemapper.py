@@ -49,9 +49,10 @@ def filter_urls_by_domain(domain, urls):
     return [url for url in urls if domain in url]
 
 def filter_in_files(urls):
-    """Filter URLs based on file extensions."""
-    include_extensions = ('.php', '.html', '.htm', '.js', '.asp', '.aspx', '.jsp', '.cgi', '.pl', '.py')
-    return [url for url in urls if url.lower().endswith(include_extensions)]
+    """Filter URLs based on file extensions, excluding .xml URLs."""
+    include_extensions = ('.asp', '.aspx', '.cgi', '.htm', '.html', '.js', '.jsp', '.php', '.py', '')
+    exclude_extensions = ('.xml')
+    return [url for url in urls if url.lower().endswith(include_extensions) and not url.lower().endswith(exclude_extensions)]
 
 def write_to_file(unique_urls, filename="mappedsites.txt"):
     """Write the list of URLs to a file."""
