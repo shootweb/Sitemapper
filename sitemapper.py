@@ -22,10 +22,31 @@ def get_urls_from_source(url, session):
 
         response = session.get(url, headers=headers)
         response.raise_for_status()
+        content = response.text
+        domain = get_domain(url)
 
-        # Extract URLs using regex for <loc> tags
-        urls = re.findall(r'<loc>(.*?)<\/loc>', response.text)
-        return [u.strip() for u in urls if u.strip()]
+        # Try extracting URLs from XML <loc> tags
+        urls = re.findall(r'<loc>(.*?)<\/loc>', content)
+        
+        # If no XML URLs found, try finding all href links in HTML
+        if not urls:
+            urls = re.findall(r'href=["\'](.*?)["\']', content, re.IGNORECASE)
+            # Convert relative URLs to absolute URLs
+            urls = [url if url.startswith("http") else f"{domain}/{url.lstrip('/')}" for url in urls]
+
+        # Filter out unwanted URLs
+        filtered_urls = []
+        for u in urls:
+            if (
+                "javascript:void(0)" in u or
+                u.endswith("#") or
+                "?" in u  # General filter for URLs with parameters
+            ):
+                continue
+            filtered_urls.append(u.strip())
+
+        # Remove duplicates
+        return list(set(filtered_urls))
 
     except requests.RequestException as e:
         logging.error(f"Error fetching URLs from {url}: {e}")
